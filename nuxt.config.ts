@@ -65,4 +65,18 @@ export default defineNuxtConfig({
 
 	// SSR best practice — canvas editor must be client-only
 	ssr: true,
+
+	app: {
+		pageTransition: { name: 'page', mode: 'out-in' },
+		head: {
+			titleTemplate: '%s — Stickr',
+			meta: [
+				{ name: 'description', content: 'Create, export and share stickers. Upload images, draw, or generate with AI.' },
+				{ name: 'theme-color', content: '#000000' },
+			],
+			link: [
+				{ rel: 'icon', type: 'image/svg+xml', href: '/favicon.svg' },
+			],
+		},
+	},
 })
