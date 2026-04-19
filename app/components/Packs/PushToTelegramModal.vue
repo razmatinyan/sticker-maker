@@ -119,7 +119,7 @@ function close() {
               Add it to Telegram using the link below.
             </p>
           </div>
-          
+          <a
             :href="packUrl"
             target="_blank"
             rel="noopener"

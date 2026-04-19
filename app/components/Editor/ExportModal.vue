@@ -4,12 +4,19 @@ const props = defineProps<{
 	previewUrl: string
 	isExporting: boolean
 	progress: number
+	packs: { id: string; name: string }[] // ← add
+	selectedPackId: string | null // ← add
 }>()
 
 const emit = defineEmits<{
 	'update:open': [value: boolean]
+	'update:selectedPackId': [value: string | null] // ← add
 	download: [format: 'png' | 'webp']
-	save: [resolve: (id: string | null) => void, reject: (e: any) => void]
+	save: [
+		packId: string | null,
+		resolve: (id: string | null) => void,
+		reject: (e: any) => void,
+	]
 }>()
 
 const user = useSupabaseUser()
@@ -41,7 +48,7 @@ async function handleSave() {
 
 	try {
 		await new Promise<string | null>((resolve, reject) => {
-			emit('save', resolve, reject)
+			emit('save', props.selectedPackId, resolve, reject) // ← pass packId
 		})
 		isSaved.value = true
 		setTimeout(() => emit('update:open', false), 1500)
@@ -197,6 +204,82 @@ async function handleSave() {
 								Saved at 1024×1024px and available in your
 								sticker library.
 							</p>
+
+							<!-- Pack selector -->
+							<div v-if="packs.length > 0" class="space-y-2">
+								<p class="text-xs text-muted-foreground">
+									Save to pack (optional)
+								</p>
+								<div
+									class="space-y-1.5 max-h-36 overflow-y-auto"
+								>
+									<!-- No pack option -->
+									<button
+										class="w-full flex items-center gap-2.5 px-3 py-2 rounded-lg border text-sm transition-all duration-150"
+										:class="
+											selectedPackId === null
+												? 'border-framer-blue bg-framer-blue/10 text-framer-blue'
+												: 'border-border text-muted-foreground hover:border-muted-foreground'
+										"
+										@click="
+											emit('update:selectedPackId', null)
+										"
+									>
+										<Icon
+											name="ri:inbox-line"
+											class="w-4 h-4 shrink-0"
+										/>
+										<span>Library only (no pack)</span>
+									</button>
+
+									<!-- Pack options -->
+									<button
+										v-for="pack in packs"
+										:key="pack.id"
+										class="w-full flex items-center gap-2.5 px-3 py-2 rounded-lg border text-sm transition-all duration-150"
+										:class="
+											selectedPackId === pack.id
+												? 'border-framer-blue bg-framer-blue/10 text-framer-blue'
+												: 'border-border text-muted-foreground hover:border-muted-foreground'
+										"
+										@click="
+											emit(
+												'update:selectedPackId',
+												pack.id,
+											)
+										"
+									>
+										<Icon
+											name="ri:folder-line"
+											class="w-4 h-4 shrink-0"
+										/>
+										<span class="truncate">{{
+											pack.name
+										}}</span>
+									</button>
+								</div>
+							</div>
+
+							<!-- Empty state — no packs yet -->
+							<div
+								v-else
+								class="flex items-center gap-2 text-xs text-muted-foreground bg-muted/50 rounded-lg px-3 py-2"
+							>
+								<Icon
+									name="ri:information-line"
+									class="w-3.5 h-3.5 shrink-0"
+								/>
+								<span>
+									No packs yet.
+									<NuxtLink
+										to="/packs"
+										class="text-framer-blue hover:underline"
+									>
+										Create one
+									</NuxtLink>
+									to organize stickers.
+								</span>
+							</div>
 
 							<Button
 								class="w-full"

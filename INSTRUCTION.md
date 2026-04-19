@@ -70,7 +70,6 @@ stickr/
 │   │   ├── useAiGeneration.ts   # Stability AI text-to-image
 │   │   ├── useBackgroundRemoval.ts  # remove.bg integration
 │   │   ├── useDashboard.ts      # Dashboard stats fetching
-│   │   └── useAppToast.ts       # Sonner toast wrapper
 │   │
 │   ├── layouts/
 │   │   ├── default.vue          # Sidebar + topbar (all authenticated pages)
@@ -167,8 +166,8 @@ Every page must declare its layout and middleware at the top:
 ```vue
 <script setup lang="ts">
 definePageMeta({
-  layout:     'default',    // 'default' | 'auth' | 'editor'
-  middleware: 'auth',       // 'auth' | 'guest' | omit for public
+	layout: 'default', // 'default' | 'auth' | 'editor'
+	middleware: 'auth', // 'auth' | 'guest' | omit for public
 })
 
 useHead({ title: 'Page Title — Stickr' })
@@ -181,11 +180,11 @@ useHead({ title: 'Page Title — Stickr' })
 
 Three layouts exist:
 
-| Layout | File | Used By |
-|---|---|---|
+| Layout    | File                      | Used By                 |
+| --------- | ------------------------- | ----------------------- |
 | `default` | `app/layouts/default.vue` | All authenticated pages |
-| `auth` | `app/layouts/auth.vue` | Login, Register |
-| `editor` | `app/layouts/editor.vue` | Canvas editor |
+| `auth`    | `app/layouts/auth.vue`    | Login, Register         |
+| `editor`  | `app/layouts/editor.vue`  | Canvas editor           |
 
 `default` includes `AppSidebar` (220px fixed left) + sticky topbar + main content area.
 `editor` includes `AppSidebar` but no topbar — editor fills full height.
@@ -241,14 +240,6 @@ All composables in `app/composables/` are auto-imported. Use them directly in `<
 const { user, signIn, signUp, signOut, isAuthenticated } = useAuth()
 ```
 
-### useAppToast
-
-```ts
-const { success, error, info, warning } = useAppToast()
-success('Profile saved!')
-error('Something went wrong')
-```
-
 ### useDashboard
 
 ```ts
@@ -287,14 +278,14 @@ The most complex store. Manages all canvas state:
 const store = useEditorStore()
 
 // State
-store.layers          // Layer[]
-store.selectedId      // string | null
-store.activeTool      // 'select' | 'draw' | 'text' | 'eraser'
-store.canvasSize      // { width: 512, height: 512 }
-store.drawColor       // string (hex)
-store.drawSize        // number (px)
-store.textColor       // string (hex)
-store.textSize        // number (px)
+store.layers // Layer[]
+store.selectedId // string | null
+store.activeTool // 'select' | 'draw' | 'text' | 'eraser'
+store.canvasSize // { width: 512, height: 512 }
+store.drawColor // string (hex)
+store.drawSize // number (px)
+store.textColor // string (hex)
+store.textSize // number (px)
 
 // Actions
 store.addLayer(layer)
@@ -305,11 +296,11 @@ store.undo()
 store.redo()
 
 // Computed
-store.canUndo         // boolean
-store.canRedo         // boolean
+store.canUndo // boolean
+store.canRedo // boolean
 
 // Image cache (never serialized to history)
-store.imageCache      // Map<id, HTMLImageElement>
+store.imageCache // Map<id, HTMLImageElement>
 ```
 
 Layer types:
@@ -356,26 +347,28 @@ Always use the `watch(user, ...)` pattern — never `onMounted`:
 
 ```ts
 const supabase = useSupabaseClient()
-const user     = useSupabaseUser()
-const data     = ref([])
+const user = useSupabaseUser()
+const data = ref([])
 
 watch(
-  user,
-  (u) => { if (u) fetchData() },
-  { immediate: true }
+	user,
+	u => {
+		if (u) fetchData()
+	},
+	{ immediate: true },
 )
 
 async function fetchData() {
-  const userId = getUserId(user.value)
-  if (!userId) return
+	const userId = getUserId(user.value)
+	if (!userId) return
 
-  const { data: result, error } = await supabase
-    .from('stickers')
-    .select('*')
-    .eq('user_id', userId)
-    .order('created_at', { ascending: false })
+	const { data: result, error } = await supabase
+		.from('stickers')
+		.select('*')
+		.eq('user_id', userId)
+		.order('created_at', { ascending: false })
 
-  if (!error) data.value = result ?? []
+	if (!error) data.value = result ?? []
 }
 ```
 
@@ -383,8 +376,8 @@ For parallel requests use `Promise.all`:
 
 ```ts
 const [stickersRes, packsRes] = await Promise.all([
-  supabase.from('stickers').select('*').eq('user_id', userId),
-  supabase.from('sticker_packs').select('*').eq('user_id', userId),
+	supabase.from('stickers').select('*').eq('user_id', userId),
+	supabase.from('sticker_packs').select('*').eq('user_id', userId),
 ])
 ```
 
@@ -403,22 +396,25 @@ server/api/stickers/[id].delete.ts → DELETE /api/stickers/:id
 Standard pattern:
 
 ```ts
-export default defineEventHandler(async (event) => {
-  const config = useRuntimeConfig()
-  const body   = await readBody(event)
+export default defineEventHandler(async event => {
+	const config = useRuntimeConfig()
+	const body = await readBody(event)
 
-  // Validate
-  if (!body.required) {
-    throw createError({ statusCode: 400, message: 'Required field missing' })
-  }
+	// Validate
+	if (!body.required) {
+		throw createError({
+			statusCode: 400,
+			message: 'Required field missing',
+		})
+	}
 
-  // Process
-  try {
-    const result = await doSomething(body, config.secretKey)
-    return { ok: true, data: result }
-  } catch (e: any) {
-    throw createError({ statusCode: 500, message: e.message })
-  }
+	// Process
+	try {
+		const result = await doSomething(body, config.secretKey)
+		return { ok: true, data: result }
+	} catch (e: any) {
+		throw createError({ statusCode: 500, message: e.message })
+	}
 })
 ```
 
@@ -426,8 +422,8 @@ Access secrets only in server routes:
 
 ```ts
 const config = useRuntimeConfig()
-config.stabilityApiKey    // ✅ server only
-config.removeBgApiKey     // ✅ server only
+config.stabilityApiKey // ✅ server only
+config.removeBgApiKey // ✅ server only
 config.supabaseServiceKey // ✅ server only
 ```
 
@@ -448,7 +444,7 @@ definePageMeta({ middleware: 'guest' })
 ### Checking Auth State
 
 ```ts
-const user            = useSupabaseUser()
+const user = useSupabaseUser()
 const isAuthenticated = computed(() => !!user.value)
 ```
 
@@ -471,13 +467,13 @@ if (!userId) throw new Error('Not authenticated')
 
 ```ts
 const supabase = useSupabaseClient()
-const user     = useSupabaseUser()
+const user = useSupabaseUser()
 
 // Query with RLS (user can only see their own data)
 const { data } = await supabase
-  .from('stickers')
-  .select('*')
-  .eq('user_id', getUserId(user.value))
+	.from('stickers')
+	.select('*')
+	.eq('user_id', getUserId(user.value))
 ```
 
 ### Server-Side (in server/api/ — bypasses RLS)
@@ -488,9 +484,7 @@ import { useSupabaseAdmin } from '~/server/utils/supabase'
 const supabase = useSupabaseAdmin()
 
 // Full access — no RLS
-const { data } = await supabase
-  .from('stickers')
-  .select('*')
+const { data } = await supabase.from('stickers').select('*')
 ```
 
 ### Storage
@@ -498,18 +492,16 @@ const { data } = await supabase
 ```ts
 // Upload
 const { error } = await supabase.storage
-  .from('stickers')
-  .upload(`${userId}/${filename}`, blob, { contentType: 'image/png' })
+	.from('stickers')
+	.upload(`${userId}/${filename}`, blob, { contentType: 'image/png' })
 
 // Get public URL
 const { data } = supabase.storage
-  .from('stickers')
-  .getPublicUrl(`${userId}/${filename}`)
+	.from('stickers')
+	.getPublicUrl(`${userId}/${filename}`)
 
 // Delete
-await supabase.storage
-  .from('stickers')
-  .remove([`${userId}/${filename}`])
+await supabase.storage.from('stickers').remove([`${userId}/${filename}`])
 ```
 
 ---
@@ -521,8 +513,8 @@ The editor (`app/pages/editor.vue`) is the most complex part of the app.
 ### Key Refs
 
 ```ts
-const stageRef       = ref()   // vue-konva stage
-const transformerRef = ref()   // vue-konva transformer
+const stageRef = ref() // vue-konva stage
+const transformerRef = ref() // vue-konva transformer
 ```
 
 ### Accessing the Stage
@@ -537,33 +529,36 @@ const stage = stageRef.value?.getNode()
 ```ts
 // Always hide transformer before export
 function exportWithoutTransformer(callback: (stage: any) => void) {
-  const stage       = stageRef.value?.getNode()
-  const transformer = transformerRef.value?.getNode()
+	const stage = stageRef.value?.getNode()
+	const transformer = transformerRef.value?.getNode()
 
-  const prev = transformer?.nodes() ?? []
-  transformer?.nodes([])
-  transformer?.getLayer()?.batchDraw()
+	const prev = transformer?.nodes() ?? []
+	transformer?.nodes([])
+	transformer?.getLayer()?.batchDraw()
 
-  callback(stage)
+	callback(stage)
 
-  transformer?.nodes(prev)
-  transformer?.getLayer()?.batchDraw()
+	transformer?.nodes(prev)
+	transformer?.getLayer()?.batchDraw()
 }
 ```
 
 ### Layer Selection + Transformer
 
 ```ts
-watch(() => store.selectedId, (newId) => {
-  nextTick(() => {
-    const transformer = transformerRef.value?.getNode()
-    const stage       = stageRef.value?.getNode()
-    const node        = newId ? stage?.findOne(`#${newId}`) : null
+watch(
+	() => store.selectedId,
+	newId => {
+		nextTick(() => {
+			const transformer = transformerRef.value?.getNode()
+			const stage = stageRef.value?.getNode()
+			const node = newId ? stage?.findOne(`#${newId}`) : null
 
-    transformer?.nodes(node ? [node] : [])
-    transformer?.getLayer()?.batchDraw()
-  })
-})
+			transformer?.nodes(node ? [node] : [])
+			transformer?.getLayer()?.batchDraw()
+		})
+	},
+)
 ```
 
 ### Adding a New Tool
@@ -621,8 +616,10 @@ Always use Tailwind tokens, never hardcode:
 <p class="text-sm text-muted-foreground">Description</p>
 
 <!-- Section label -->
-<p class="text-[11px] font-medium text-muted-foreground uppercase tracking-wider">
-  Label
+<p
+	class="text-[11px] font-medium text-muted-foreground uppercase tracking-wider"
+>
+	Label
 </p>
 ```
 
@@ -641,16 +638,16 @@ touch app/pages/my-feature.vue
 <!-- 2. Page template -->
 <script setup lang="ts">
 definePageMeta({
-  layout:     'default',
-  middleware: 'auth',
+	layout: 'default',
+	middleware: 'auth',
 })
 useHead({ title: 'My Feature — Stickr' })
 </script>
 
 <template>
-  <div class="max-w-5xl space-y-6">
-    <h1 class="text-2xl font-medium tracking-heading">My Feature</h1>
-  </div>
+	<div class="max-w-5xl space-y-6">
+		<h1 class="text-2xl font-medium tracking-heading">My Feature</h1>
+	</div>
 </template>
 ```
 
@@ -667,16 +664,19 @@ useHead({ title: 'My Feature — Stickr' })
 
 ```ts
 // server/api/my-endpoint.post.ts
-export default defineEventHandler(async (event) => {
-  const body   = await readBody(event)
-  const config = useRuntimeConfig()
+export default defineEventHandler(async event => {
+	const body = await readBody(event)
+	const config = useRuntimeConfig()
 
-  if (!body.requiredField) {
-    throw createError({ statusCode: 400, message: 'requiredField is required' })
-  }
+	if (!body.requiredField) {
+		throw createError({
+			statusCode: 400,
+			message: 'requiredField is required',
+		})
+	}
 
-  // Logic here
-  return { ok: true }
+	// Logic here
+	return { ok: true }
 })
 ```
 
@@ -693,14 +693,14 @@ export default defineEventHandler(async (event) => {
 ```ts
 // app/composables/useMyFeature.ts
 export function useMyFeature() {
-  const state     = ref<any[]>([])
-  const isLoading = ref(false)
+	const state = ref<any[]>([])
+	const isLoading = ref(false)
 
-  async function fetchData() {
-    // implementation
-  }
+	async function fetchData() {
+		// implementation
+	}
 
-  return { state, isLoading, fetchData }
+	return { state, isLoading, fetchData }
 }
 ```
 
@@ -710,14 +710,14 @@ No import needed — auto-imported everywhere.
 
 ## 15. Environment Variables
 
-| Variable | Side | Required | Description |
-|---|---|---|---|
-| `NUXT_PUBLIC_SUPABASE_URL` | Client + Server | ✅ | Supabase project URL |
-| `NUXT_PUBLIC_SUPABASE_ANON_KEY` | Client + Server | ✅ | Supabase anon key (Legacy) |
-| `NUXT_SUPABASE_SERVICE_KEY` | Server only | ✅ | Supabase service key (Legacy) |
-| `NUXT_STABILITY_API_KEY` | Server only | Optional | Stability AI key |
-| `NUXT_REMOVE_BG_API_KEY` | Server only | Optional | remove.bg API key |
-| `NUXT_TELEGRAM_BOT_TOKEN` | Server only | Optional | Default bot token |
+| Variable                        | Side            | Required | Description                   |
+| ------------------------------- | --------------- | -------- | ----------------------------- |
+| `NUXT_PUBLIC_SUPABASE_URL`      | Client + Server | ✅       | Supabase project URL          |
+| `NUXT_PUBLIC_SUPABASE_ANON_KEY` | Client + Server | ✅       | Supabase anon key (Legacy)    |
+| `NUXT_SUPABASE_SERVICE_KEY`     | Server only     | ✅       | Supabase service key (Legacy) |
+| `NUXT_STABILITY_API_KEY`        | Server only     | Optional | Stability AI key              |
+| `NUXT_REMOVE_BG_API_KEY`        | Server only     | Optional | remove.bg API key             |
+| `NUXT_TELEGRAM_BOT_TOKEN`       | Server only     | Optional | Default bot token             |
 
 `NUXT_PUBLIC_*` variables are safe to expose to the browser.
 All others are server-only and never sent to the client.
@@ -762,16 +762,16 @@ TEST_PASSWORD=testpassword123
 
 ## 17. Common Errors & Fixes
 
-| Error | Cause | Fix |
-|---|---|---|
-| `user.value.id` is undefined | `@nuxtjs/supabase` v2 uses `sub` not `id` | Use `getUserId(user.value)` |
-| Hydration mismatch on styles | Inline `style` differs server/client | Move to CSS class |
-| `Cannot read properties of undefined (reading 'state')` | Pinia + Nuxt 4 compat | Add `storesDirs` to `nuxt.config.ts` |
-| `window is not defined` | Browser API during SSR | Wrap in `if (import.meta.client)` or `onMounted` |
-| Konva `Can not find parent node` | Transformer in separate `v-layer` | Put transformer in same `v-layer` as content |
-| `getStage()` returns undefined | Wrong vue-konva method | Use `getNode()` instead |
-| Canvas preview empty in modal | Async timing issue | Generate preview synchronously before opening modal |
-| Transformer shows in exports | Not hidden before `toDataURL()` | Use `exportWithoutTransformer()` helper |
-| `Icon failed to load` | Wrong icon name | Verify at https://remixicon.com |
-| `shadcn` type error in nuxt.config | Types not generated yet | Run `npx nuxi prepare` |
-| Slow performance in Docker on Windows | WSL2 file system crossing | Move project into WSL2 filesystem |
+| Error                                                   | Cause                                     | Fix                                                 |
+| ------------------------------------------------------- | ----------------------------------------- | --------------------------------------------------- |
+| `user.value.id` is undefined                            | `@nuxtjs/supabase` v2 uses `sub` not `id` | Use `getUserId(user.value)`                         |
+| Hydration mismatch on styles                            | Inline `style` differs server/client      | Move to CSS class                                   |
+| `Cannot read properties of undefined (reading 'state')` | Pinia + Nuxt 4 compat                     | Add `storesDirs` to `nuxt.config.ts`                |
+| `window is not defined`                                 | Browser API during SSR                    | Wrap in `if (import.meta.client)` or `onMounted`    |
+| Konva `Can not find parent node`                        | Transformer in separate `v-layer`         | Put transformer in same `v-layer` as content        |
+| `getStage()` returns undefined                          | Wrong vue-konva method                    | Use `getNode()` instead                             |
+| Canvas preview empty in modal                           | Async timing issue                        | Generate preview synchronously before opening modal |
+| Transformer shows in exports                            | Not hidden before `toDataURL()`           | Use `exportWithoutTransformer()` helper             |
+| `Icon failed to load`                                   | Wrong icon name                           | Verify at https://remixicon.com                     |
+| `shadcn` type error in nuxt.config                      | Types not generated yet                   | Run `npx nuxi prepare`                              |
+| Slow performance in Docker on Windows                   | WSL2 file system crossing                 | Move project into WSL2 filesystem                   |

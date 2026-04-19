@@ -138,9 +138,11 @@ function handleDownload(format: 'png' | 'webp') {
 }
 
 // Save to Supabase
-async function handleSaveToLibrary() {
+async function handleSaveToLibrary(packId?: string): Promise<string | null> {
+	if (!user.value) return null
+
 	const userId = getUserId(user.value)
-	if (!userId) throw new Error('You must be signed in to save')
+	if (!userId) throw new Error('Not authenticated')
 
 	let mainDataUrl = ''
 	let thumbDataUrl = ''
@@ -153,10 +155,10 @@ async function handleSaveToLibrary() {
 		})
 	})
 
-	if (!mainDataUrl) throw new Error('Canvas is not ready. Please try again.')
+	if (!mainDataUrl) throw new Error('Canvas is empty')
 
 	const toBlob = (url: string, mime: string) => {
-		const binary = atob(url.split(',')[1] || '')
+		const binary = atob(url.split(',')[1])
 		const arr = new Uint8Array(binary.length)
 		for (let i = 0; i < binary.length; i++) arr[i] = binary.charCodeAt(i)
 		return new Blob([arr], { type: mime })
@@ -174,13 +176,11 @@ async function handleSaveToLibrary() {
 
 	if (uploadError) throw uploadError
 
-	const { error: thumbError } = await supabase.storage
+	await supabase.storage
 		.from('thumbnails')
 		.upload(thumbPath, toBlob(thumbDataUrl, 'image/webp'), {
 			contentType: 'image/webp',
 		})
-
-	if (thumbError) throw thumbError
 
 	const { data: stickerPublicUrl } = supabase.storage
 		.from('stickers')
@@ -194,6 +194,7 @@ async function handleSaveToLibrary() {
 		.from('stickers')
 		.insert({
 			user_id: userId,
+			pack_id: packId ?? null, // ← assign to pack
 			processed_path: stickerPublicUrl.publicUrl,
 			thumbnail_path: thumbPublicUrl.publicUrl,
 			source: 'upload',
@@ -208,17 +209,41 @@ async function handleSaveToLibrary() {
 }
 
 async function onSaveRequested(
+	packId: string | null,
 	resolve: (id: string | null) => void,
 	reject: (e: any) => void,
 ) {
 	try {
-		const id = await handleSaveToLibrary()
-		if (!id) throw new Error('Save failed unexpectedly')
+		const id = await handleSaveToLibrary(packId ?? undefined)
 		resolve(id)
 	} catch (e) {
 		reject(e)
 	}
 }
+
+const userPacks = ref<any[]>([])
+const selectedPackId = ref<string | null>(null)
+
+async function fetchPacks() {
+	const userId = getUserId(user.value)
+	if (!userId) return
+
+	const { data } = await supabase
+		.from('sticker_packs')
+		.select('id, name')
+		.eq('user_id', userId)
+		.order('created_at', { ascending: false })
+
+	userPacks.value = data ?? []
+}
+
+watch(
+	user,
+	u => {
+		if (u) fetchPacks()
+	},
+	{ immediate: true },
+)
 </script>
 
 <template>
@@ -370,6 +395,9 @@ async function onSaveRequested(
 			:preview-url="previewDataUrl"
 			:is-exporting="isExporting"
 			:progress="progress"
+			:packs="userPacks"
+			:selected-pack-id="selectedPackId"
+			@update:selected-pack-id="selectedPackId = $event"
 			@download="handleDownload"
 			@save="onSaveRequested"
 		/>
