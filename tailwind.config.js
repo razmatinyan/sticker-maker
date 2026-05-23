@@ -15,6 +15,7 @@ module.exports = {
     },
     extend: {
       fontFamily: {
+        display: ['Plus Jakarta Sans', ...fontFamily.sans],
         sans: ['Geist', ...fontFamily.sans],
         mono: ['Geist Mono', ...fontFamily.mono],
       },
@@ -52,8 +53,10 @@ module.exports = {
           DEFAULT: 'hsl(var(--popover))',
           foreground: 'hsl(var(--popover-foreground))',
         },
-        // ── Custom ─────────────────────────────────────────
-        'framer-blue': 'hsl(212 100% 50%)',
+        // ── Accent gradient colors ───────────────────────────
+        'accent-indigo': 'hsl(239 84% 67%)',
+        'accent-violet': 'hsl(258 90% 66%)',
+        'accent-rose': 'hsl(350 89% 60%)',
       },
       borderRadius: {
         lg: 'var(--radius)',
@@ -71,14 +74,26 @@ module.exports = {
           to: { height: '0' },
         },
         'fade-in': {
-          from: { opacity: '0', transform: 'translateY(4px)' },
+          from: { opacity: '0', transform: 'translateY(6px)' },
           to: { opacity: '1', transform: 'translateY(0)' },
+        },
+        'float': {
+          '0%, 100%': { transform: 'translate(0, 0) scale(1)' },
+          '25%': { transform: 'translate(30px, -20px) scale(1.05)' },
+          '50%': { transform: 'translate(-20px, 15px) scale(0.95)' },
+          '75%': { transform: 'translate(15px, 25px) scale(1.02)' },
+        },
+        'glow-pulse': {
+          '0%, 100%': { opacity: '0.12' },
+          '50%': { opacity: '0.18' },
         },
       },
       animation: {
         'accordion-down': 'accordion-down 0.2s ease-out',
         'accordion-up': 'accordion-up 0.2s ease-out',
-        'fade-in': 'fade-in 0.2s ease-out',
+        'fade-in': 'fade-in 0.3s ease-out',
+        'float': 'float 20s ease-in-out infinite',
+        'glow-pulse': 'glow-pulse 4s ease-in-out infinite',
       },
     },
   },

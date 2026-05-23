@@ -33,23 +33,15 @@ async function handleSubmit() {
 		<!-- Success state -->
 		<div v-if="isSuccess" class="text-center space-y-3">
 			<div
-				class="w-12 h-12 rounded-full bg-framer-blue/10 flex items-center justify-center mx-auto"
+				class="w-12 h-12 rounded-full flex items-center justify-center mx-auto"
+				style="background: linear-gradient(135deg, rgba(99,102,241,0.15), rgba(139,92,246,0.15))"
 			>
-				<svg
-					class="w-6 h-6 text-framer-blue"
-					fill="none"
-					viewBox="0 0 24 24"
-					stroke="currentColor"
-				>
-					<path
-						stroke-linecap="round"
-						stroke-linejoin="round"
-						stroke-width="2"
-						d="M5 13l4 4L19 7"
-					/>
-				</svg>
+				<Icon
+					name="ri:check-line"
+					class="w-6 h-6 text-accent-indigo"
+				/>
 			</div>
-			<h2 class="text-lg font-medium">Check your email</h2>
+			<h2 class="text-lg font-bold font-display">Check your email</h2>
 			<p class="text-sm text-muted-foreground">
 				We sent a confirmation link to <strong>{{ email }}</strong>
 			</p>
@@ -63,7 +55,7 @@ async function handleSubmit() {
 		<!-- Form -->
 		<template v-else>
 			<div class="space-y-1 text-center">
-				<h1 class="text-xl font-medium tracking-heading">
+				<h1 class="text-xl font-bold tracking-heading font-display">
 					Create account
 				</h1>
 				<p class="text-sm text-muted-foreground">
@@ -119,27 +111,16 @@ async function handleSubmit() {
 					</p>
 				</div>
 
-				<Button type="submit" class="w-full" :disabled="isLoading">
+				<Button
+					type="submit"
+					class="w-full gradient-btn rounded-lg text-sm"
+					:disabled="isLoading"
+				>
 					<span v-if="isLoading" class="flex items-center gap-2">
-						<svg
+						<Icon
+							name="ri:loader-4-line"
 							class="w-4 h-4 animate-spin"
-							viewBox="0 0 24 24"
-							fill="none"
-						>
-							<circle
-								class="opacity-25"
-								cx="12"
-								cy="12"
-								r="10"
-								stroke="currentColor"
-								stroke-width="4"
-							/>
-							<path
-								class="opacity-75"
-								fill="currentColor"
-								d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z"
-							/>
-						</svg>
+						/>
 						Creating account...
 					</span>
 					<span v-else>Create account</span>
@@ -152,7 +133,7 @@ async function handleSubmit() {
 				Already have an account?
 				<NuxtLink
 					to="/auth/login"
-					class="text-framer-blue hover:underline ml-1"
+					class="text-accent-indigo hover:text-accent-violet transition-colors ml-1"
 				>
 					Sign in
 				</NuxtLink>

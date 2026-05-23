@@ -44,11 +44,11 @@ function isActive(href: string) {
 	<aside class="sidebar">
 		<!-- Header -->
 		<div class="sidebar-header">
-			<div class="sidebar-logo">
+			<NuxtLink to="/dashboard" class="sidebar-logo">
 				<div class="sidebar-logo-icon"><span>S</span></div>
 				<span class="sidebar-logo-text">Stickr</span>
-			</div>
-			<button class="sidebar-search">
+			</NuxtLink>
+			<button class="sidebar-search" aria-label="Search">
 				<Icon
 					name="ri:search-line"
 					class="w-3.5 h-3.5 text-muted-foreground"
@@ -73,7 +73,7 @@ function isActive(href: string) {
 								:to="item.href"
 								class="sidebar-nav-item"
 								:class="{
-									'sidebar-nav-item--active': isActive(
+									'sidebar-nav-item--active pl-5': isActive(
 										item.href,
 									),
 								}"
@@ -95,7 +95,7 @@ function isActive(href: string) {
 			<NuxtLink to="/settings" class="sidebar-footer-btn">
 				<Icon
 					name="ri:settings-line"
-					class="w-4 h-4 text-muted-foreground"
+					class="w-4 h-4"
 				/>
 			</NuxtLink>
 
@@ -106,7 +106,7 @@ function isActive(href: string) {
 
 			<DropdownMenu>
 				<DropdownMenuTrigger as-child>
-					<button class="sidebar-avatar">
+					<button class="sidebar-avatar" aria-label="User menu">
 						<Avatar class="w-7 h-7">
 							<AvatarImage
 								v-if="user?.user_metadata?.avatar_url"
@@ -114,7 +114,7 @@ function isActive(href: string) {
 								:alt="user.user_metadata?.full_name ?? 'User'"
 							/>
 							<AvatarFallback
-								class="text-xs bg-framer-blue text-white"
+								class="text-xs font-semibold text-white bg-gradient-to-br from-indigo-500 to-violet-500"
 							>
 								{{
 									(

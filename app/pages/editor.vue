@@ -347,6 +347,7 @@ watch(
 											tension: layer.tension,
 											globalCompositeOperation:
 												layer.globalCompositeOperation,
+										listening: false,
 										}"
 									/>
 								</template>
@@ -356,9 +357,9 @@ watch(
 									ref="transformerRef"
 									:config="{
 										rotateEnabled: true,
-										borderStroke: 'rgba(0, 153, 255, 0.8)',
+										borderStroke: 'rgba(139, 92, 246, 0.8)',
 										borderStrokeWidth: 1,
-										anchorFill: '#0099ff',
+										anchorFill: '#8b5cf6',
 										anchorStroke: '#ffffff',
 										anchorStrokeWidth: 1,
 										anchorSize: 8,

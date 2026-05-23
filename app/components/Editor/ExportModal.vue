@@ -118,7 +118,7 @@ async function handleSave() {
 								class="flex-1 py-2 rounded-lg text-sm border transition-all duration-150"
 								:class="
 									format === f
-										? 'border-framer-blue bg-framer-blue/10 text-framer-blue'
+										? 'border-accent-violet bg-accent-violet/10 text-accent-violet'
 										: 'border-border text-muted-foreground hover:border-muted-foreground'
 								"
 								@click="format = f as any"
@@ -165,11 +165,11 @@ async function handleSave() {
 						<!-- Success -->
 						<div v-if="isSaved" class="text-center py-4 space-y-2">
 							<div
-								class="w-10 h-10 rounded-full bg-framer-blue/10 flex items-center justify-center mx-auto"
+								class="w-10 h-10 rounded-full bg-accent-violet/10 flex items-center justify-center mx-auto"
 							>
 								<Icon
 									name="ri:check-line"
-									class="w-5 h-5 text-framer-blue"
+									class="w-5 h-5 text-accent-violet"
 								/>
 							</div>
 							<p class="text-sm font-medium">Saved to library!</p>
@@ -182,7 +182,7 @@ async function handleSave() {
 									class="h-1.5 bg-muted rounded-full overflow-hidden"
 								>
 									<div
-										class="h-full bg-framer-blue rounded-full transition-all duration-300"
+										class="h-full bg-accent-violet rounded-full transition-all duration-300"
 										:style="{ width: `${progress || 10}%` }"
 									/>
 								</div>
@@ -218,7 +218,7 @@ async function handleSave() {
 										class="w-full flex items-center gap-2.5 px-3 py-2 rounded-lg border text-sm transition-all duration-150"
 										:class="
 											selectedPackId === null
-												? 'border-framer-blue bg-framer-blue/10 text-framer-blue'
+												? 'border-accent-violet bg-accent-violet/10 text-accent-violet'
 												: 'border-border text-muted-foreground hover:border-muted-foreground'
 										"
 										@click="
@@ -239,7 +239,7 @@ async function handleSave() {
 										class="w-full flex items-center gap-2.5 px-3 py-2 rounded-lg border text-sm transition-all duration-150"
 										:class="
 											selectedPackId === pack.id
-												? 'border-framer-blue bg-framer-blue/10 text-framer-blue'
+												? 'border-accent-violet bg-accent-violet/10 text-accent-violet'
 												: 'border-border text-muted-foreground hover:border-muted-foreground'
 										"
 										@click="
@@ -273,7 +273,7 @@ async function handleSave() {
 									No packs yet.
 									<NuxtLink
 										to="/packs"
-										class="text-framer-blue hover:underline"
+										class="text-accent-violet hover:underline"
 									>
 										Create one
 									</NuxtLink>

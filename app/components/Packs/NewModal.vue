@@ -111,7 +111,7 @@ function close() {
 					</div>
 					<div
 						class="w-9 h-5 rounded-full transition-colors duration-150 shrink-0"
-						:class="isTelegram ? 'bg-framer-blue' : 'bg-muted'"
+						:class="isTelegram ? 'bg-accent-violet' : 'bg-muted'"
 					>
 						<div
 							class="w-4 h-4 rounded-full bg-white mt-0.5 transition-transform duration-150"

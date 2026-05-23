@@ -10,13 +10,17 @@ const supabase = useSupabaseClient()
 const user = useSupabaseUser()
 const isLoading = ref(true)
 const isSaving = ref(false)
+const saveSuccess = ref(false)
 const profile = ref<any>(null)
 const fullName = ref('')
 const username = ref('')
 
 async function fetchProfile() {
 	const userId = getUserId(user.value)
-	if (!userId) return
+	if (!userId) {
+		isLoading.value = false
+		return
+	}
 
 	const { data } = await supabase
 		.from('profiles')
@@ -35,6 +39,7 @@ async function saveProfile() {
 	if (!userId) return
 
 	isSaving.value = true
+	saveSuccess.value = false
 
 	const { error: dbError } = await supabase
 		.from('profiles')
@@ -49,7 +54,8 @@ async function saveProfile() {
 	if (dbError) {
 		console.log(dbError.message)
 	} else {
-		console.log('Profile saved!')
+		saveSuccess.value = true
+		setTimeout(() => (saveSuccess.value = false), 3000)
 	}
 }
 
@@ -68,28 +74,36 @@ watch(
 </script>
 
 <template>
-	<div class="max-w-2xl space-y-6">
-		<div>
-			<h1 class="text-2xl font-medium tracking-heading">Settings</h1>
+	<div class="max-w-2xl space-y-5">
+		<div class="stagger-item" style="--stagger-index: 0">
+			<h1 class="text-2xl font-bold tracking-heading font-display">
+				Settings
+			</h1>
 			<p class="text-muted-foreground text-sm mt-1">
 				Manage your account and preferences.
 			</p>
 		</div>
 
-		<div v-if="isLoading">
+		<div v-if="isLoading" class="space-y-4">
 			<Skeleton class="h-64 rounded-xl" />
 		</div>
 
 		<template v-else>
 			<!-- Profile -->
-			<div class="glass-card p-5 space-y-4">
-				<p class="text-sm font-medium">Profile</p>
+			<div
+				class="glass-surface p-5 space-y-4 stagger-item"
+				style="--stagger-index: 1"
+			>
+				<p class="text-xs font-semibold text-muted-foreground uppercase tracking-wider">
+					Profile
+				</p>
 
 				<!-- Avatar -->
 				<div class="flex items-center gap-4">
 					<Avatar class="w-14 h-14">
 						<AvatarFallback
-							class="text-lg bg-framer-blue text-white"
+							class="text-lg text-white"
+							style="background: linear-gradient(135deg, hsl(239 84% 67%), hsl(258 90% 66%))"
 						>
 							{{
 								(fullName || user?.email || 'U')
@@ -99,7 +113,7 @@ watch(
 						</AvatarFallback>
 					</Avatar>
 					<div>
-						<p class="text-sm font-medium">
+						<p class="text-sm font-semibold">
 							{{ fullName || 'No name set' }}
 						</p>
 						<p class="text-xs text-muted-foreground">
@@ -129,23 +143,40 @@ watch(
 						/>
 					</div>
 
-					<Button :disabled="isSaving" @click="saveProfile">
-						<Icon
-							v-if="isSaving"
-							name="ri:loader-4-line"
-							class="w-4 h-4 mr-2 animate-spin"
-						/>
-						Save Changes
-					</Button>
+					<div class="flex items-center gap-2">
+						<Button
+							:disabled="isSaving"
+							class="gradient-btn rounded-lg text-sm"
+							@click="saveProfile"
+						>
+							<Icon
+								v-if="isSaving"
+								name="ri:loader-4-line"
+								class="w-4 h-4 mr-2 animate-spin"
+							/>
+							<span>Save Changes</span>
+						</Button>
+						<p
+							v-if="saveSuccess"
+							class="text-xs text-green-400 animate-fade-in"
+						>
+							✓ Saved!
+						</p>
+					</div>
 				</div>
 			</div>
 
 			<!-- Account -->
-			<div class="glass-card p-5 space-y-3">
-				<p class="text-sm font-medium">Account</p>
+			<div
+				class="glass-surface p-5 space-y-3 stagger-item"
+				style="--stagger-index: 2"
+			>
+				<p class="text-xs font-semibold text-muted-foreground uppercase tracking-wider">
+					Account
+				</p>
 				<div class="flex items-center justify-between">
 					<div>
-						<p class="text-sm">Email</p>
+						<p class="text-sm font-medium">Email</p>
 						<p class="text-xs text-muted-foreground">
 							{{ user?.email }}
 						</p>
@@ -159,7 +190,10 @@ watch(
 					class="w-full"
 					@click="handleSignOut"
 				>
-					<Icon name="ri:logout-box-line" class="w-4 h-4 mr-2" />
+					<Icon
+						name="ri:logout-box-line"
+						class="w-4 h-4 mr-2"
+					/>
 					Sign Out
 				</Button>
 			</div>

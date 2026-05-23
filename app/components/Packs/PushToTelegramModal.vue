@@ -158,7 +158,7 @@ function close() {
             <NuxtLink
               v-if="error.includes('connect')"
               to="/telegram"
-              class="text-framer-blue hover:underline ml-1"
+              class="text-accent-violet hover:underline ml-1"
             >
               Connect now →
             </NuxtLink>

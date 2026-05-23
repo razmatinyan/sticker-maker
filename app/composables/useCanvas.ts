@@ -56,6 +56,7 @@ export function useCanvas() {
 	function handleDrawStart(e: KonvaEventObject<MouseEvent | TouchEvent>) {
 		if (store.activeTool !== 'draw' && store.activeTool !== 'eraser') return
 		store.isDrawing = true
+		store.selectedId = null
 
 		const pos = e.target.getStage()?.getPointerPosition()
 		if (!pos) return

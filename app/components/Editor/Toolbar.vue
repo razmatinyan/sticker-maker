@@ -62,14 +62,13 @@ async function handleRemoveBg() {
 		<Tooltip>
 			<TooltipTrigger as-child>
 				<button class="toolbar-btn" @click="triggerUpload">
-					<Icon name="ri:upload-line" class="w-4 h-4" />
+					<Icon name="ri:image-add-line" class="w-4 h-4" />
 				</button>
 			</TooltipTrigger>
-			<TooltipContent side="right">Upload Image</TooltipContent>
+			<TooltipContent side="top">Upload Image</TooltipContent>
 		</Tooltip>
 
-		<Separator class="my-1" />
-
+		<!-- Remove Background -->
 		<Tooltip>
 			<TooltipTrigger as-child>
 				<button
@@ -82,11 +81,17 @@ async function handleRemoveBg() {
 						name="ri:loader-4-line"
 						class="w-4 h-4 animate-spin"
 					/>
-					<Icon v-else name="ri:scissors-cut-line" class="w-4 h-4" />
+					<Icon
+						v-else
+						name="ri:scissors-cut-line"
+						class="w-4 h-4"
+					/>
 				</button>
 			</TooltipTrigger>
-			<TooltipContent side="right">Remove Background</TooltipContent>
+			<TooltipContent side="top">Remove Background</TooltipContent>
 		</Tooltip>
+
+		<div class="toolbar-divider" />
 
 		<!-- Draw tools -->
 		<Tooltip v-for="tool in tools" :key="tool.id">
@@ -101,10 +106,10 @@ async function handleRemoveBg() {
 					<Icon :name="tool.icon" class="w-4 h-4" />
 				</button>
 			</TooltipTrigger>
-			<TooltipContent side="right">{{ tool.label }}</TooltipContent>
+			<TooltipContent side="top">{{ tool.label }}</TooltipContent>
 		</Tooltip>
 
-		<Separator class="my-1" />
+		<div class="toolbar-divider" />
 
 		<!-- Text -->
 		<Tooltip>
@@ -113,7 +118,7 @@ async function handleRemoveBg() {
 					<Icon name="ri:text" class="w-4 h-4" />
 				</button>
 			</TooltipTrigger>
-			<TooltipContent side="right">Add Text</TooltipContent>
+			<TooltipContent side="top">Add Text</TooltipContent>
 		</Tooltip>
 
 		<!-- AI Generate -->
@@ -123,10 +128,10 @@ async function handleRemoveBg() {
 					<Icon name="ri:sparkling-line" class="w-4 h-4" />
 				</button>
 			</TooltipTrigger>
-			<TooltipContent side="right">AI Generate</TooltipContent>
+			<TooltipContent side="top">AI Generate</TooltipContent>
 		</Tooltip>
 
-		<Separator class="my-1" />
+		<div class="toolbar-divider" />
 
 		<!-- Undo / Redo -->
 		<Tooltip>
@@ -139,7 +144,7 @@ async function handleRemoveBg() {
 					<Icon name="ri:arrow-go-back-line" class="w-4 h-4" />
 				</button>
 			</TooltipTrigger>
-			<TooltipContent side="right">Undo</TooltipContent>
+			<TooltipContent side="top">Undo</TooltipContent>
 		</Tooltip>
 
 		<Tooltip>
@@ -149,29 +154,31 @@ async function handleRemoveBg() {
 					:disabled="!store.canRedo"
 					@click="store.redo()"
 				>
-					<Icon name="ri:arrow-go-forward-line" class="w-4 h-4" />
+					<Icon
+						name="ri:arrow-go-forward-line"
+						class="w-4 h-4"
+					/>
 				</button>
 			</TooltipTrigger>
-			<TooltipContent side="right">Redo</TooltipContent>
+			<TooltipContent side="top">Redo</TooltipContent>
 		</Tooltip>
 
-		<Separator class="my-1" />
+		<div class="toolbar-divider" />
 
 		<!-- Clear -->
 		<Tooltip>
 			<TooltipTrigger as-child>
 				<button
-					class="toolbar-btn text-destructive hover:bg-destructive/10"
+					class="toolbar-btn toolbar-btn--destructive"
 					@click="store.clearCanvas()"
 				>
 					<Icon name="ri:delete-bin-line" class="w-4 h-4" />
 				</button>
 			</TooltipTrigger>
-			<TooltipContent side="right">Clear Canvas</TooltipContent>
+			<TooltipContent side="top">Clear Canvas</TooltipContent>
 		</Tooltip>
 
-		<!-- Spacer -->
-		<div class="flex-1" />
+		<div class="toolbar-divider" />
 
 		<!-- Export -->
 		<Tooltip>
@@ -180,10 +187,10 @@ async function handleRemoveBg() {
 					class="toolbar-btn toolbar-btn--export"
 					@click="emit('openExport')"
 				>
-					<Icon name="ri:download-line" class="w-4 h-4" />
+					<Icon name="ri:share-forward-line" class="w-4 h-4" />
 				</button>
 			</TooltipTrigger>
-			<TooltipContent side="right">Export</TooltipContent>
+			<TooltipContent side="top">Export</TooltipContent>
 		</Tooltip>
 	</div>
 </template>

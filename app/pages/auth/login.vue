@@ -29,7 +29,9 @@ async function handleSubmit() {
 	<div class="space-y-5">
 		<!-- Header -->
 		<div class="space-y-1 text-center">
-			<h1 class="text-xl font-medium tracking-heading">Welcome back</h1>
+			<h1 class="text-xl font-bold tracking-heading font-display">
+				Welcome back
+			</h1>
 			<p class="text-sm text-muted-foreground">
 				Sign in to your Stickr account
 			</p>
@@ -69,34 +71,22 @@ async function handleSubmit() {
 				/>
 			</div>
 
-			<Button type="submit" class="w-full" :disabled="isLoading">
+			<Button
+				type="submit"
+				class="w-full gradient-btn rounded-lg text-sm"
+				:disabled="isLoading"
+			>
 				<span v-if="isLoading" class="flex items-center gap-2">
-					<svg
+					<Icon
+						name="ri:loader-4-line"
 						class="w-4 h-4 animate-spin"
-						viewBox="0 0 24 24"
-						fill="none"
-					>
-						<circle
-							class="opacity-25"
-							cx="12"
-							cy="12"
-							r="10"
-							stroke="currentColor"
-							stroke-width="4"
-						/>
-						<path
-							class="opacity-75"
-							fill="currentColor"
-							d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z"
-						/>
-					</svg>
+					/>
 					Signing in...
 				</span>
 				<span v-else>Sign in</span>
 			</Button>
 		</form>
 
-		<!-- Divider -->
 		<Separator />
 
 		<!-- Register link -->
@@ -104,7 +94,7 @@ async function handleSubmit() {
 			Don't have an account?
 			<NuxtLink
 				to="/auth/register"
-				class="text-framer-blue hover:underline ml-1"
+				class="text-accent-indigo hover:text-accent-violet transition-colors ml-1"
 			>
 				Sign up free
 			</NuxtLink>

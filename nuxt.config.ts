@@ -9,7 +9,6 @@ export default defineNuxtConfig({
 		'@nuxtjs/supabase',
 		'@pinia/nuxt',
 		'shadcn-nuxt',
-		'@pinia/nuxt',
 		'@vueuse/nuxt',
 		'@nuxt/fonts',
 		'@nuxt/icon',
@@ -34,10 +33,11 @@ export default defineNuxtConfig({
 	},
 	fonts: {
 		families: [
+			{ name: 'Plus Jakarta Sans', provider: 'google' },
 			{ name: 'Geist', provider: 'bunny' },
 			{ name: 'Geist Mono', provider: 'bunny' },
 		],
-		priority: ['bunny'],
+		priority: ['google', 'bunny'],
 		processCSSVariables: true,
 		experimental: {
 			disableLocalFallbacks: true,
@@ -59,20 +59,34 @@ export default defineNuxtConfig({
 	},
 	vite: {
 		optimizeDeps: {
-			include: ['@vue/devtools-core', '@vue/devtools-kit'],
+			include: [
+				'@vue/devtools-core',
+				'@vue/devtools-kit',
+				'jszip',
+				'file-saver',
+			],
 		},
 	},
 
 	// SSR best practice — canvas editor must be client-only
 	ssr: true,
 
+	// Route-level rendering strategy
+	routeRules: {
+		'/editor': { ssr: false }, // Konva canvas is fully client-side
+	},
+
 	app: {
 		pageTransition: { name: 'page', mode: 'out-in' },
 		head: {
 			titleTemplate: '%s — Stickr',
 			meta: [
-				{ name: 'description', content: 'Create, export and share stickers. Upload images, draw, or generate with AI.' },
-				{ name: 'theme-color', content: '#000000' },
+				{
+					name: 'description',
+					content:
+						'Create, export and share stickers. Upload images, draw, or generate with AI.',
+				},
+				{ name: 'theme-color', content: '#09090f' },
 			],
 			link: [
 				{ rel: 'icon', type: 'image/svg+xml', href: '/favicon.svg' },
